@@ -3050,10 +3050,19 @@ function initFirebase() {
     }
 }
 
-// Initialize Firebase on page load
-if (typeof firebase !== 'undefined') {
-    initFirebase();
-}
+// Initialize Firebase when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    // Wait a bit for Firebase SDK to load
+    setTimeout(() => {
+        if (typeof firebase !== 'undefined') {
+            initFirebase();
+            // After Firebase is initialized, load thumbs count
+            if (firebaseInitialized) {
+                loadThumbsCount();
+            }
+        }
+    }, 100);
+});
 
 // Feedback and Signup Functions
 const BASE_THUMBS_COUNT = 86; // Base count from existing users
@@ -3061,29 +3070,39 @@ let currentThumbsCount = BASE_THUMBS_COUNT;
 
 // Load thumbs count from Firebase or localStorage
 async function loadThumbsCount() {
+    console.log('Loading thumbs count... Firebase initialized:', firebaseInitialized);
+    
     if (firebaseInitialized && db) {
         try {
+            console.log('Fetching thumbs count from Firebase...');
             const doc = await db.collection('stats').doc('thumbsUp').get();
             if (doc.exists) {
                 currentThumbsCount = doc.data().count || BASE_THUMBS_COUNT;
+                console.log('✅ Loaded thumbs count from Firebase:', currentThumbsCount);
             } else {
                 // Initialize with base count
+                console.log('Initializing thumbs count in Firebase with base:', BASE_THUMBS_COUNT);
                 await db.collection('stats').doc('thumbsUp').set({ count: BASE_THUMBS_COUNT });
                 currentThumbsCount = BASE_THUMBS_COUNT;
+                console.log('✅ Initialized thumbs count in Firebase');
             }
             updateThumbsCount();
         } catch (error) {
-            console.error('Error loading thumbs count:', error);
+            console.error('❌ Error loading thumbs count from Firebase:', error);
+            console.error('Error details:', error.message, error.code);
             // Fallback to localStorage
             const localCount = parseInt(localStorage.getItem('thumbsUpCount') || BASE_THUMBS_COUNT.toString());
             currentThumbsCount = localCount;
             updateThumbsCount();
+            console.log('Using localStorage fallback:', currentThumbsCount);
         }
     } else {
+        console.log('Firebase not available, using localStorage');
         // Use localStorage fallback
         const localCount = parseInt(localStorage.getItem('thumbsUpCount') || BASE_THUMBS_COUNT.toString());
         currentThumbsCount = localCount;
         updateThumbsCount();
+        console.log('Loaded from localStorage:', currentThumbsCount);
     }
 }
 
@@ -3099,9 +3118,14 @@ async function handleThumbsUp() {
         localStorage.setItem('thumbsUpGiven', 'true');
         updateThumbsCount();
         
+        console.log('Thumbs up clicked! New count:', currentThumbsCount);
+        console.log('Firebase initialized:', firebaseInitialized);
+        console.log('DB available:', !!db);
+        
         // Save to Firebase or localStorage
         if (firebaseInitialized && db) {
             try {
+                console.log('Saving thumbs up to Firebase...');
                 await db.collection('stats').doc('thumbsUp').set({ 
                     count: currentThumbsCount,
                     lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
@@ -3114,13 +3138,16 @@ async function handleThumbsUp() {
                     date: new Date().toISOString()
                 });
                 
-                console.log('✅ Thumbs up saved to Firebase');
+                console.log('✅ Thumbs up saved to Firebase. Count:', currentThumbsCount);
             } catch (error) {
-                console.error('Error saving to Firebase:', error);
+                console.error('❌ Error saving to Firebase:', error);
+                console.error('Error details:', error.message, error.code);
                 // Fallback to localStorage
                 localStorage.setItem('thumbsUpCount', currentThumbsCount.toString());
+                console.log('Saved to localStorage as fallback');
             }
         } else {
+            console.log('Firebase not available, using localStorage');
             // Use localStorage fallback
             localStorage.setItem('thumbsUpCount', currentThumbsCount.toString());
         }
@@ -3214,10 +3241,13 @@ async function handleSignupSubmit(e) {
     // Check if email already exists and save to Firebase or localStorage
     if (firebaseInitialized && db) {
         try {
+            console.log('Checking for existing email:', email);
             // Check if email already exists
             const existingSignups = await db.collection('signups')
                 .where('email', '==', email)
                 .get();
+            
+            console.log('Existing signups found:', existingSignups.size);
             
             if (!existingSignups.empty) {
                 messageDiv.textContent = 'This email is already subscribed!';
@@ -3230,6 +3260,7 @@ async function handleSignupSubmit(e) {
             }
             
             // Save to Firebase
+            console.log('Saving email to Firebase:', email);
             await db.collection('signups').add({
                 email: email,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
@@ -3238,12 +3269,14 @@ async function handleSignupSubmit(e) {
             });
             console.log('✅ Email signup saved to Firebase');
         } catch (error) {
-            console.error('Error saving signup to Firebase:', error);
+            console.error('❌ Error saving signup to Firebase:', error);
+            console.error('Error details:', error.message, error.code);
             // Fallback to localStorage
             const signups = JSON.parse(localStorage.getItem('signups') || '[]');
             if (!signups.some(entry => entry.email === email)) {
                 signups.push(signupEntry);
                 localStorage.setItem('signups', JSON.stringify(signups));
+                console.log('Email signup saved to localStorage (fallback)');
             } else {
                 messageDiv.textContent = 'This email is already subscribed!';
                 messageDiv.className = 'signup-message error';
@@ -3255,6 +3288,7 @@ async function handleSignupSubmit(e) {
             }
         }
     } else {
+        console.log('Firebase not initialized, using localStorage');
         // Use localStorage fallback
         const signups = JSON.parse(localStorage.getItem('signups') || '[]');
         if (!signups.some(entry => entry.email === email)) {
@@ -3316,18 +3350,28 @@ document.head.appendChild(style);
 document.addEventListener('DOMContentLoaded', function() {
     updateTopicDropdown();
     
-    // Load thumbs count (async, will update when loaded)
-    loadThumbsCount();
-    
-    // Set up real-time listener for thumbs count if Firebase is available
-    if (firebaseInitialized && db) {
-        db.collection('stats').doc('thumbsUp').onSnapshot((doc) => {
-            if (doc.exists) {
-                currentThumbsCount = doc.data().count || BASE_THUMBS_COUNT;
-                updateThumbsCount();
-            }
-        });
+    // Initialize Firebase and load thumbs count
+    if (typeof firebase !== 'undefined' && !firebaseInitialized) {
+        initFirebase();
     }
+    
+    // Load thumbs count (will use Firebase if available, otherwise localStorage)
+    setTimeout(() => {
+        loadThumbsCount();
+        
+        // Set up real-time listener for thumbs count if Firebase is available
+        if (firebaseInitialized && db) {
+            db.collection('stats').doc('thumbsUp').onSnapshot((doc) => {
+                if (doc.exists) {
+                    currentThumbsCount = doc.data().count || BASE_THUMBS_COUNT;
+                    updateThumbsCount();
+                    console.log('✅ Thumbs count updated from Firebase:', currentThumbsCount);
+                }
+            }, (error) => {
+                console.error('Error setting up real-time listener:', error);
+            });
+        }
+    }, 200);
     
     // Check if user already gave thumbs up
     if (localStorage.getItem('thumbsUpGiven') === 'true') {
