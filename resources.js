@@ -260,9 +260,14 @@ function renderResources(resources) {
                                 title = title.replace('Worksheet Worksheet', 'Worksheet');
                             }
                             
+                            // Use originalUrl if available (for GitHub Pages), otherwise use local url
+                            // Check if we're on GitHub Pages or if local file might not exist
+                            const isGitHubPages = window.location.hostname.includes('github.io');
+                            const pdfUrl = (isGitHubPages && worksheet.originalUrl) ? worksheet.originalUrl : (worksheet.originalUrl || worksheet.url);
+                            
                             html += `<div class="resource-item">`;
                             html += `<span class="resource-item-title">${title}</span>`;
-                            html += `<a href="${worksheet.url}" target="_blank" class="resource-item-link" download>Download PDF</a>`;
+                            html += `<a href="${pdfUrl}" target="_blank" class="resource-item-link" ${!isGitHubPages ? 'download' : ''}>Download PDF</a>`;
                             html += `</div>`;
                         });
 
