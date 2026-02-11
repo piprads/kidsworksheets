@@ -695,13 +695,18 @@ body {
     }
 
     .nav-tabs,
+    .main-nav,
     .hero-section,
     .worksheet-selector,
     .feedback-section,
     .btn-secondary,
     .btn-primary,
-    .worksheet-header {
+    .site-footer {
         display: none !important;
+    }
+
+    .worksheet-header {
+        display: block !important;
     }
 
     .worksheet-container {
