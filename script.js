@@ -3103,8 +3103,17 @@ function updateThumbsCount() {
 }
 
 async function handleThumbsUp() {
+    console.log('🔥 handleThumbsUp called!');
     const thumbsBtn = document.getElementById('thumbsUp');
+    console.log('Thumbs button found:', !!thumbsBtn);
+    
+    if (!thumbsBtn) {
+        console.error('❌ Thumbs up button not found!');
+        return;
+    }
+    
     if (!thumbsBtn.classList.contains('active')) {
+        console.log('Processing thumbs up click...');
         currentThumbsCount++;
         thumbsBtn.classList.add('active');
         localStorage.setItem('thumbsUpGiven', 'true');
@@ -3376,10 +3385,17 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('printBtn').addEventListener('click', printWorksheet);
     
     // Feedback features
-    document.getElementById('thumbsUp').addEventListener('click', function() {
-        handleThumbsUp();
-        localStorage.setItem('thumbsUpGiven', 'true');
-    });
+    const thumbsUpBtn = document.getElementById('thumbsUp');
+    if (thumbsUpBtn) {
+        console.log('✅ Thumbs up button found, adding event listener');
+        thumbsUpBtn.addEventListener('click', function(e) {
+            console.log('👍 Thumbs up button clicked!');
+            e.preventDefault();
+            handleThumbsUp();
+        });
+    } else {
+        console.error('❌ Thumbs up button not found in DOM!');
+    }
     
     document.getElementById('feedbackForm').addEventListener('submit', handleFeedbackSubmit);
     document.getElementById('signupForm').addEventListener('submit', handleSignupSubmit);
