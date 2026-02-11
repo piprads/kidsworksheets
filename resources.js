@@ -260,10 +260,25 @@ function renderResources(resources) {
                                 title = title.replace('Worksheet Worksheet', 'Worksheet');
                             }
                             
-                            // Use originalUrl if available (for GitHub Pages), otherwise use local url
-                            // Check if we're on GitHub Pages or if local file might not exist
-                            const isGitHubPages = window.location.hostname.includes('github.io');
-                            const pdfUrl = (isGitHubPages && worksheet.originalUrl) ? worksheet.originalUrl : (worksheet.originalUrl || worksheet.url);
+                            // Always use originalUrl when on GitHub Pages (PDFs aren't in repo)
+                            const isGitHubPages = window.location.hostname.includes('github.io') || 
+                                                  window.location.hostname.includes('github.com');
+                            
+                            // On GitHub Pages: MUST use originalUrl (PDFs not in repo)
+                            // Local: use local file if available
+                            let pdfUrl;
+                            if (isGitHubPages) {
+                                // Force use originalUrl on GitHub Pages - PDFs are not in the repository
+                                if (worksheet.originalUrl) {
+                                    pdfUrl = worksheet.originalUrl;
+                                } else {
+                                    console.warn('No originalUrl found for worksheet:', worksheet);
+                                    pdfUrl = worksheet.url; // Fallback only
+                                }
+                            } else {
+                                // Local environment: prefer local file
+                                pdfUrl = worksheet.url || worksheet.originalUrl;
+                            }
                             
                             html += `<div class="resource-item">`;
                             html += `<span class="resource-item-title">${title}</span>`;
