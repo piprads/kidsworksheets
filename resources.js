@@ -4,10 +4,18 @@
 // Load downloaded PDF structure
 async function loadDownloadedPDFs() {
     // First, try to use embedded data (works with file:// protocol)
-    if (typeof EMBEDDED_PDF_STRUCTURE !== 'undefined' && EMBEDDED_PDF_STRUCTURE) {
+    // Check for both possible variable names
+    let embeddedData = null;
+    if (typeof window.embeddedPdfStructure !== 'undefined' && window.embeddedPdfStructure) {
+        embeddedData = window.embeddedPdfStructure;
+    } else if (typeof EMBEDDED_PDF_STRUCTURE !== 'undefined' && EMBEDDED_PDF_STRUCTURE) {
+        embeddedData = EMBEDDED_PDF_STRUCTURE;
+    }
+    
+    if (embeddedData) {
         console.log('✅ Using embedded PDF structure data');
-        console.log('📊 Categories found:', Object.keys(EMBEDDED_PDF_STRUCTURE));
-        return EMBEDDED_PDF_STRUCTURE;
+        console.log('📊 Categories found:', Object.keys(embeddedData));
+        return embeddedData;
     }
     
     // Fallback: Try to fetch from server (only works with http:// protocol)
@@ -342,109 +350,37 @@ window.toggleExpand = function(element) {
     }
 }
 
-// Tab switching functionality
+// Load and render resources on page load
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('📄 DOM loaded, setting up Resources tab...');
+    console.log('📄 DOM loaded, loading Resources page...');
     
-    // Load resources immediately on page load
-    console.log('📚 Pre-loading resources...');
-    loadDownloadedPDFs()
-        .then(downloadedData => {
-            if (downloadedData) {
-                console.log('✅ PDF data pre-loaded, categories:', Object.keys(downloadedData));
-                window.cachedResources = convertToResourcesFormat(downloadedData);
-                console.log('✅ Resources cached, categories:', Object.keys(window.cachedResources));
-            } else {
-                console.warn('⚠️ No PDF data found on pre-load');
-                window.cachedResources = null;
-            }
-        })
-        .catch(error => {
-            console.error('❌ Error pre-loading PDFs:', error);
-            window.cachedResources = null;
-        });
-    
-    const tabs = document.querySelectorAll('.nav-tab');
-    const tabContents = document.querySelectorAll('.tab-content');
-
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            const targetTab = tab.getAttribute('data-tab');
-            console.log('🖱️ Tab clicked:', targetTab);
-
-            // Remove active class from all tabs and contents
-            tabs.forEach(t => t.classList.remove('active'));
-            tabContents.forEach(tc => tc.classList.remove('active'));
-
-            // Add active class to clicked tab and corresponding content
-            tab.classList.add('active');
-            const targetContent = document.getElementById(`${targetTab}Tab`);
-            if (targetContent) {
-                targetContent.classList.add('active');
-            }
-
-            // Render resources when resources tab is opened
-            if (targetTab === 'resources') {
-                console.log('📚 Resources tab opened');
-                
-                // Use cached resources if available, otherwise load fresh
-                if (window.cachedResources && Object.keys(window.cachedResources).length > 0) {
-                    console.log('✅ Using cached resources');
-                    renderResources(window.cachedResources);
-                } else {
-                    console.log('📥 Loading resources fresh...');
-                    loadDownloadedPDFs()
-                        .then(downloadedData => {
-                            if (downloadedData) {
-                                console.log('✅ PDF data loaded, converting...');
-                                const resources = convertToResourcesFormat(downloadedData);
-                                window.cachedResources = resources;
-                                if (Object.keys(resources).length > 0) {
-                                    console.log('✅ Rendering resources...');
-                                    renderResources(resources);
-                                } else {
-                                    console.warn('⚠️ No resources after conversion');
-                                    renderResources(null);
-                                }
-                            } else {
-                                console.warn('⚠️ No PDF data found');
-                                renderResources(null);
-                            }
-                        })
-                        .catch(error => {
-                            console.error('❌ Error loading PDFs:', error);
-                            renderResources(null);
-                        });
-                }
-            }
-        });
-    });
-
-    // Initial render if resources tab is active
-    const resourcesTab = document.getElementById('resourcesTab');
-    if (resourcesTab && resourcesTab.classList.contains('active')) {
-        console.log('📚 Resources tab is active on load, loading...');
-        if (window.cachedResources && Object.keys(window.cachedResources).length > 0) {
-            renderResources(window.cachedResources);
-        } else {
-            loadDownloadedPDFs()
-                .then(downloadedData => {
-                    if (downloadedData) {
-                        const resources = convertToResourcesFormat(downloadedData);
-                        window.cachedResources = resources;
-                        if (Object.keys(resources).length > 0) {
-                            renderResources(resources);
-                        } else {
-                            renderResources(null);
-                        }
+    // Check if we're on the resources page (standalone page)
+    const resourcesContent = document.getElementById('resourcesContent');
+    if (resourcesContent) {
+        console.log('📚 Resources page detected, loading resources...');
+        
+        loadDownloadedPDFs()
+            .then(downloadedData => {
+                if (downloadedData) {
+                    console.log('✅ PDF data loaded, categories:', Object.keys(downloadedData));
+                    const resources = convertToResourcesFormat(downloadedData);
+                    if (Object.keys(resources).length > 0) {
+                        console.log('✅ Rendering resources...');
+                        renderResources(resources);
                     } else {
+                        console.warn('⚠️ No resources after conversion');
                         renderResources(null);
                     }
-                })
-                .catch(error => {
-                    console.error('Error loading PDFs:', error);
+                } else {
+                    console.warn('⚠️ No PDF data found');
                     renderResources(null);
-                });
-        }
+                }
+            })
+            .catch(error => {
+                console.error('❌ Error loading PDFs:', error);
+                renderResources(null);
+            });
+    } else {
+        console.log('ℹ️ Not on resources page, skipping resource loading');
     }
 });

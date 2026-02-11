@@ -11,14 +11,14 @@
 </head>
 <body>
     <div class="container">
-        <!-- Navigation Tabs -->
-        <div class="nav-tabs">
-            <button class="nav-tab active" data-tab="generator">Worksheet Generator</button>
-            <button class="nav-tab" data-tab="resources">Resources</button>
-        </div>
+        <!-- Navigation Header -->
+        <nav class="main-nav">
+            <a href="index.html" class="nav-link active">Worksheet Generator</a>
+            <a href="resources.html" class="nav-link">Resources</a>
+        </nav>
 
-        <!-- Generator Tab Content -->
-        <div id="generatorTab" class="tab-content active">
+        <!-- Main Content -->
+        <div>
         <!-- Hero Section -->
         <header class="hero-section">
             <div class="hero-content">
@@ -140,20 +140,6 @@
             </div>
         </div>
         </div>
-
-        <!-- Resources Tab Content -->
-        <div id="resourcesTab" class="tab-content">
-            <div class="resources-container">
-                <header class="resources-header">
-                    <h1>📚 Free Educational Resources</h1>
-                    <p>Organized collection of free worksheets from K5 Learning</p>
-                </header>
-
-                <div class="resources-content" id="resourcesContent">
-                    <!-- Resources will be populated by JavaScript -->
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- Firebase SDK -->
@@ -162,7 +148,5 @@
     
     <script src="firebase-config.js"></script>
     <script src="script.js"></script>
-    <script src="pdfs-structure-embedded.js"></script>
-    <script src="resources.js"></script>
 </body>
 </html>
