@@ -707,6 +707,23 @@ body {
 
     .worksheet-header {
         display: block !important;
+        text-align: center;
+        border-bottom: 3px solid #333;
+        padding-bottom: 15px;
+        margin-bottom: 25px;
+        page-break-after: avoid;
+    }
+
+    .worksheet-header h2 {
+        font-size: 24px;
+        margin-bottom: 5px;
+        color: #333;
+    }
+
+    .worksheet-header .info {
+        font-size: 14px;
+        color: #666;
+        margin-top: 5px;
     }
 
     .worksheet-container {
