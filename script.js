@@ -3050,19 +3050,11 @@ function initFirebase() {
     }
 }
 
-// Initialize Firebase when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
-    // Wait a bit for Firebase SDK to load
-    setTimeout(() => {
-        if (typeof firebase !== 'undefined') {
-            initFirebase();
-            // After Firebase is initialized, load thumbs count
-            if (firebaseInitialized) {
-                loadThumbsCount();
-            }
-        }
-    }, 100);
-});
+// Initialize Firebase when Firebase SDK is loaded
+// This will be called after the scripts load
+if (typeof firebase !== 'undefined' && typeof firebaseConfig !== 'undefined') {
+    initFirebase();
+}
 
 // Feedback and Signup Functions
 const BASE_THUMBS_COUNT = 86; // Base count from existing users
