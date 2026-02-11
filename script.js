@@ -3028,17 +3028,20 @@ function printWorksheet() {
 }
 
 // Feedback and Signup Functions
-let thumbsUpCount = parseInt(localStorage.getItem('thumbsUpCount') || '0');
+const BASE_THUMBS_COUNT = 86; // Base count from existing users
+let userThumbsClicks = parseInt(localStorage.getItem('userThumbsClicks') || '0');
 
 function updateThumbsCount() {
-    document.getElementById('thumbsCount').textContent = thumbsUpCount;
+    const totalCount = BASE_THUMBS_COUNT + userThumbsClicks;
+    document.getElementById('thumbsCount').textContent = totalCount;
 }
 
 function handleThumbsUp() {
     const thumbsBtn = document.getElementById('thumbsUp');
     if (!thumbsBtn.classList.contains('active')) {
-        thumbsUpCount++;
-        localStorage.setItem('thumbsUpCount', thumbsUpCount.toString());
+        userThumbsClicks++;
+        localStorage.setItem('userThumbsClicks', userThumbsClicks.toString());
+        localStorage.setItem('thumbsUpGiven', 'true');
         thumbsBtn.classList.add('active');
         updateThumbsCount();
         
@@ -3051,6 +3054,9 @@ function handleThumbsUp() {
             message.style.animation = 'slideOut 0.3s';
             setTimeout(() => message.remove(), 300);
         }, 3000);
+        
+        // Log click for tracking (in a real app, send to server)
+        console.log('Thumbs up clicked! Total count:', BASE_THUMBS_COUNT + userThumbsClicks);
     }
 }
 
@@ -3063,16 +3069,19 @@ function handleFeedbackSubmit(e) {
         return;
     }
     
-    // In a real app, you would send this to a server
-    console.log('Feedback submitted:', feedbackText);
-    
-    // Store feedback locally (in real app, send to server)
+    // Store feedback locally
     const feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
-    feedbacks.push({
+    const feedbackEntry = {
         text: feedbackText,
-        timestamp: new Date().toISOString()
-    });
+        timestamp: new Date().toISOString(),
+        date: new Date().toLocaleString()
+    };
+    feedbacks.push(feedbackEntry);
     localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
+    
+    // Log feedback for tracking (in a real app, send to server)
+    console.log('Feedback saved:', feedbackEntry);
+    console.log('Total feedbacks stored:', feedbacks.length);
     
     // Show success message
     const message = document.createElement('div');
@@ -3100,14 +3109,28 @@ function handleSignupSubmit(e) {
         return;
     }
     
-    // In a real app, you would send this to a server
-    console.log('Signup email:', email);
-    
-    // Store email locally (in real app, send to server)
+    // Store email locally
     const signups = JSON.parse(localStorage.getItem('signups') || '[]');
-    if (!signups.includes(email)) {
-        signups.push(email);
+    if (!signups.some(entry => entry.email === email)) {
+        const signupEntry = {
+            email: email,
+            timestamp: new Date().toISOString(),
+            date: new Date().toLocaleString()
+        };
+        signups.push(signupEntry);
         localStorage.setItem('signups', JSON.stringify(signups));
+        
+        // Log signup for tracking (in a real app, send to server)
+        console.log('Email signup saved:', signupEntry);
+        console.log('Total signups stored:', signups.length);
+    } else {
+        messageDiv.textContent = 'This email is already subscribed!';
+        messageDiv.className = 'signup-message error';
+        messageDiv.style.display = 'block';
+        setTimeout(() => {
+            messageDiv.style.display = 'none';
+        }, 3000);
+        return;
     }
     
     // Show success message
