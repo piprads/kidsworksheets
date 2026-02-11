@@ -9,8 +9,8 @@ body {
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     /* Beautiful education-themed background with overlay for readability */
     background-image: 
-        linear-gradient(rgba(255, 255, 255, 0.75), rgba(245, 247, 250, 0.8)),
-        url('https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+        linear-gradient(rgba(255, 255, 255, 0.7), rgba(245, 247, 250, 0.75)),
+        url('https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=1920&q=80');
     background-size: cover;
     background-position: center center;
     background-attachment: fixed;
@@ -20,6 +20,11 @@ body {
     line-height: 1.6;
     position: relative;
 }
+
+/* Alternative: If you want to use a local image, uncomment below and comment the URL above */
+/* background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.7), rgba(245, 247, 250, 0.75)),
+    url('background.jpg'); */
 
 .container {
     max-width: 1200px;
