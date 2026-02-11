@@ -26,7 +26,13 @@ async function loadDownloadedPDFs() {
         return null;
     }
     
+    // Determine base path based on current page location
+    const isResourcesPage = window.location.pathname.includes('/resources');
+    const basePath = isResourcesPage ? '../' : '';
+    
     const paths = [
+        `${basePath}pdfs/downloaded-structure.json`,
+        `${basePath}./pdfs/downloaded-structure.json`,
         'pdfs/downloaded-structure.json',
         './pdfs/downloaded-structure.json'
     ];
@@ -272,6 +278,10 @@ function renderResources(resources) {
                             const isGitHubPages = window.location.hostname.includes('github.io') || 
                                                   window.location.hostname.includes('github.com');
                             
+                            // Determine if we're on the resources page (in subdirectory)
+                            const isResourcesPage = window.location.pathname.includes('/resources');
+                            const pathPrefix = isResourcesPage ? '../' : '';
+                            
                             // On GitHub Pages: MUST use originalUrl (PDFs not in repo)
                             // Local: use local file if available
                             let pdfUrl;
@@ -281,11 +291,15 @@ function renderResources(resources) {
                                     pdfUrl = worksheet.originalUrl;
                                 } else {
                                     console.warn('No originalUrl found for worksheet:', worksheet);
-                                    pdfUrl = worksheet.url; // Fallback only
+                                    pdfUrl = pathPrefix + (worksheet.url || ''); // Fallback only
                                 }
                             } else {
-                                // Local environment: prefer local file
-                                pdfUrl = worksheet.url || worksheet.originalUrl;
+                                // Local environment: prefer local file, adjust path if in subdirectory
+                                if (worksheet.url && !worksheet.url.startsWith('http')) {
+                                    pdfUrl = pathPrefix + worksheet.url;
+                                } else {
+                                    pdfUrl = worksheet.url || worksheet.originalUrl;
+                                }
                             }
                             
                             html += `<div class="resource-item">`;
