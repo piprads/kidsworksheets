@@ -1,14 +1,14 @@
 // Firebase Configuration
-// Replace these values with your Firebase project credentials
-// Get them from: https://console.firebase.google.com/
+// Firebase project: kidsworksheets
 
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyA7b-QqLUYdDVWiq7Eohh38nkxEloIlBHM",
+    authDomain: "kidsworksheets.firebaseapp.com",
+    projectId: "kidsworksheets",
+    storageBucket: "kidsworksheets.firebasestorage.app",
+    messagingSenderId: "875501588445",
+    appId: "1:875501588445:web:65a560f8dcb8f5b5dc3034",
+    measurementId: "G-FM58DHD1ZB"
 };
 
 // Initialize Firebase (will be done in script.js after this config is loaded)
