@@ -1,0 +1,10 @@
+# PDFs directory (large files)
+pdfs/
+!pdfs/.gitkeep
+
+# Node modules
+node_modules/
+
+# Downloaded structure (can be regenerated)
+pdfs/downloaded-structure.json
+pdfs/failed-downloads.json

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Resources</title>
+</head>
+<body>
+    <h1>Test Resources Loading</h1>
+    <div id="test"></div>
+    <script>
+        fetch('pdfs/downloaded-structure.json')
+            .then(response => {
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Response not OK: ' + response.status);
+                }
+            })
+            .then(data => {
+                console.log('Data loaded:', data);
+                document.getElementById('test').innerHTML = '<pre>' + JSON.stringify(data, null, 2).substring(0, 500) + '</pre>';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('test').innerHTML = '<p style="color: red;">Error: ' + error.message + '</p>';
+            });
+    </script>
+</body>
+</html>

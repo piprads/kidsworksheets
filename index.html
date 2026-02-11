@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kids Worksheet Generator - ICSE Syllabus</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-tab="generator">Worksheet Generator</button>
+            <button class="nav-tab" data-tab="resources">Resources</button>
+        </div>
+
+        <!-- Generator Tab Content -->
+        <div id="generatorTab" class="tab-content active">
+        <!-- Hero Section -->
+        <header class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">📚 Kids Worksheet Generator</h1>
+                <p class="hero-subtitle">Create printable worksheets for 4-8 year olds based on ICSE syllabus</p>
+                <p class="hero-description">Generate unlimited practice worksheets with 20 questions per page. Perfect for parents and teachers!</p>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-number">20+</div>
+                    <div class="stat-label">Questions per page</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">4</div>
+                    <div class="stat-label">Subjects</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Print Ready</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Worksheet Generator Section -->
+        <div class="worksheet-selector">
+            <h2 class="section-title">Generate Your Worksheet</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="ageGroup">Age Group / Class:</label>
+                    <select id="ageGroup">
+                        <option value="4-5">4-5 years (KG/Prep)</option>
+                        <option value="6-7">6-7 years (Class 1-2)</option>
+                        <option value="7-8">7-8 years (Class 2-3)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="subject">Subject:</label>
+                    <select id="subject">
+                        <option value="math">Mathematics</option>
+                        <option value="english">English</option>
+                        <option value="hindi">Hindi</option>
+                        <option value="gk">General Knowledge</option>
+                        <option value="mixed">Mixed</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="topic">Topic (ICSE Curriculum):</label>
+                    <select id="topic">
+                        <option value="all">All Topics (Random)</option>
+                        <!-- Topics will be populated dynamically based on subject -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="difficulty">Difficulty Level:</label>
+                    <select id="difficulty">
+                        <option value="easy">Easy</option>
+                        <option value="medium">Medium</option>
+                        <option value="hard">Hard</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group full-width checkbox-group">
+                <label>
+                    <input type="checkbox" id="randomMode">
+                    <span>Generate Random Worksheet (Random topic, difficulty, and exercises)</span>
+                </label>
+            </div>
+
+            <div class="button-group">
+                <button id="generateBtn" class="btn-primary">
+                    <span>✨ Generate Worksheet</span>
+                </button>
+                <button id="printBtn" class="btn-secondary" style="display: none;">
+                    🖨️ Print Worksheet
+                </button>
+            </div>
+        </div>
+
+        <!-- Worksheet Container -->
+        <div id="worksheetContainer" class="worksheet-container" style="display: none;">
+            <div id="worksheet" class="worksheet">
+                <!-- Worksheet content will be generated here -->
+            </div>
+        </div>
+
+        <!-- Feedback Section -->
+        <div class="feedback-section">
+            <div class="feedback-card">
+                <h3>💚 Love this tool?</h3>
+                <p>Help us improve by sharing your feedback!</p>
+                <div class="thumbs-container">
+                    <button id="thumbsUp" class="thumbs-btn thumbs-up">
+                        <span class="thumbs-icon">👍</span>
+                        <span class="thumbs-count" id="thumbsCount">0</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="feedback-card">
+                <h3>📝 Leave Feedback</h3>
+                <form id="feedbackForm" class="feedback-form">
+                    <textarea id="feedbackText" placeholder="Share your thoughts, suggestions, or report any issues..." rows="4"></textarea>
+                    <button type="submit" class="btn-feedback">Submit Feedback</button>
+                </form>
+            </div>
+
+            <div class="feedback-card">
+                <h3>🔔 Stay Updated</h3>
+                <p>Get notified about new features and updates!</p>
+                <form id="signupForm" class="signup-form">
+                    <input type="email" id="signupEmail" placeholder="Enter your email address" required>
+                    <button type="submit" class="btn-signup">Subscribe</button>
+                </form>
+                <div id="signupMessage" class="signup-message" style="display: none;"></div>
+            </div>
+        </div>
+        </div>
+
+        <!-- Resources Tab Content -->
+        <div id="resourcesTab" class="tab-content">
+            <div class="resources-container">
+                <header class="resources-header">
+                    <h1>📚 Free Educational Resources</h1>
+                    <p>Organized collection of free worksheets from K5 Learning</p>
+                </header>
+
+                <div class="resources-content" id="resourcesContent">
+                    <!-- Resources will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="pdfs-structure-embedded.js"></script>
+    <script src="resources.js"></script>
+</body>
+</html>
