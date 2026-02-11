@@ -3243,7 +3243,7 @@ async function handleSignupSubmit(e) {
     if (firebaseInitialized && db) {
         try {
             console.log('Checking for existing email:', email);
-            // Check if email already exists
+            // Check if email already exists (this requires READ permission)
             const existingSignups = await db.collection('signups')
                 .where('email', '==', email)
                 .get();
@@ -3260,7 +3260,7 @@ async function handleSignupSubmit(e) {
                 return;
             }
             
-            // Save to Firebase
+            // Save to Firebase (this requires WRITE permission)
             console.log('Saving email to Firebase:', email);
             await db.collection('signups').add({
                 email: email,
@@ -3272,6 +3272,15 @@ async function handleSignupSubmit(e) {
         } catch (error) {
             console.error('❌ Error saving signup to Firebase:', error);
             console.error('Error details:', error.message, error.code);
+            console.error('Full error:', error);
+            
+            // If it's a permissions error, provide helpful message
+            if (error.code === 'permission-denied') {
+                console.error('⚠️ PERMISSIONS ERROR: Make sure Firestore security rules allow READ and WRITE for signups collection');
+                console.error('   Go to Firebase Console → Firestore → Rules');
+                console.error('   The signups rule should be: allow read, write: if true;');
+            }
+            
             // Fallback to localStorage
             const signups = JSON.parse(localStorage.getItem('signups') || '[]');
             if (!signups.some(entry => entry.email === email)) {
