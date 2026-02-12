@@ -1187,16 +1187,42 @@ body {
 
     .site-footer {
         margin-top: 40px;
-        padding: 30px 20px 20px;
+        padding: 35px 20px 25px;
+        border-radius: 20px 20px 0 0;
     }
 
     .footer-content {
         grid-template-columns: 1fr;
-        gap: 30px;
+        gap: 35px;
+        margin-bottom: 25px;
     }
 
     .footer-section {
         text-align: center;
+    }
+
+    .footer-section h4 {
+        font-size: 1.2em;
+        justify-content: center;
+        margin-bottom: 12px;
+    }
+
+    .footer-section p {
+        font-size: 0.9em;
+        line-height: 1.5;
+    }
+
+    .footer-section ul li a {
+        font-size: 0.9em;
+    }
+
+    .footer-bottom {
+        padding-top: 20px;
+    }
+
+    .footer-bottom p {
+        font-size: 0.85em;
+        line-height: 1.5;
     }
 }
 
